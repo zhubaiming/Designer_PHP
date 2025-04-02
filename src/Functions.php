@@ -51,3 +51,14 @@ if (!function_exists('get_config')) {
         return $config[$type] ?? $params;
     }
 }
+
+if (!function_exists('get_parent_namespace')) {
+    function get_parent_namespace(string $namespace, int $levels = 1): string
+    {
+        while ($levels-- > 0 && ($pos = strrpos($namespace, '\\')) !== false) {
+            $namespace = substr($namespace, 0, $pos);
+        }
+
+        return $namespace;
+    }
+}
