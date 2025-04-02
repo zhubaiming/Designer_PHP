@@ -89,9 +89,7 @@ class Vaults
      */
     public static function registerProvider($provider, $data = null): void
     {
-        $var = new $provider();
-
-        self::set($provider, $var->register($data));
+        (new $provider())->register($data);
     }
 
     /**

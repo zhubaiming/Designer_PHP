@@ -6,13 +6,14 @@ namespace Hongyi\Designer\Providers;
 
 use Hongyi\Designer\Contracts\ServiceProviderInterface;
 use Hongyi\Designer\Services\Config;
+use Hongyi\Designer\Vaults;
 
 class ConfigServiceProvider implements ServiceProviderInterface
 {
     private array $config = [];
 
-    public function register(mixed $data = null): Config
+    public function register(mixed $data = null): void
     {
-        return new Config(array_replace_recursive($this->config, $data ?? []));
+        Vaults::set(self::class, new Config(array_replace_recursive($this->config, $data ?? [])));
     }
 }

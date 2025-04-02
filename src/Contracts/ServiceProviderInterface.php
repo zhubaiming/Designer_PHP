@@ -10,5 +10,5 @@ namespace Hongyi\Designer\Contracts;
  */
 interface ServiceProviderInterface
 {
-    public function register(mixed $data = null);
+    public function register(mixed $data = null): void;
 }
