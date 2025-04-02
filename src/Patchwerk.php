@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Hongyi\Designer;
 
-use Hongyi\Designer\Contract\PackerInterface;
+use Hongyi\Designer\Contracts\HttpEnumInterface;
+use Hongyi\Designer\Contracts\PackerInterface;
 use Psr\Http\Message\MessageInterface;
 
 class Patchwerk
@@ -19,7 +20,7 @@ class Patchwerk
      */
     private array $parametersOrigin = [];
 
-    private $httpEnum = null;
+    private ?HttpEnumInterface $httpEnum = null;
 
     /**
      * 有效荷载(实际存储请求 API 时所需要的所有有效参数)
@@ -29,6 +30,7 @@ class Patchwerk
     /**
      * 打包器，可根据打包类型不同，使用不同的打包器(如: json类型打包器，query类型打包器，xml类型打包器等)
      */
+//    private string $packer = PackerInterface::class;
     private ?PackerInterface $packer = null;
 
     /**
@@ -41,7 +43,7 @@ class Patchwerk
     /**
      * 返回结果(实际会在插件执行过程中进行修改，变成新的内容)
      */
-    private ?MessageInterface $destination = null;
+    private null|array|MessageInterface $destination = null;
 
     /**
      * 原始返回结果(未做任何修改)
@@ -124,18 +126,22 @@ class Patchwerk
     }
 
     /**
-     * @return null
+     * 获取Http响应枚举
+     *
+     * @return HttpEnumInterface|null
      */
-    public function getHttpEnum()
+    public function getHttpEnum(): ?HttpEnumInterface
     {
         return $this->httpEnum;
     }
 
     /**
-     * @param $httpEnum
+     * 设置Http响应枚举
+     *
+     * @param HttpEnumInterface $httpEnum
      * @return $this
      */
-    public function setHttpEnum($httpEnum): static
+    public function setHttpEnum(HttpEnumInterface $httpEnum): static
     {
         $this->httpEnum = $httpEnum;
 
@@ -168,8 +174,12 @@ class Patchwerk
     /**
      * 获取当前打包器
      *
-     * @return PackerInterface|null
+     * @return string
      */
+//    public function getPacker(): string
+//    {
+//        return $this->packer;
+//    }
     public function getPacker(): ?PackerInterface
     {
         return $this->packer;
@@ -178,10 +188,16 @@ class Patchwerk
     /**
      * 设置当前打包器
      *
-     * @param PackerInterface|null $packer
+     * @param string $packer
      * @return $this
      */
-    public function setPacker(?PackerInterface $packer): static
+//    public function setPacker(string $packer): static
+//    {
+//        $this->packer = $packer;
+//
+//        return $this;
+//    }
+    public function setPacker(PackerInterface $packer): static
     {
         $this->packer = $packer;
 
@@ -233,9 +249,9 @@ class Patchwerk
     /**
      * 获取当前返回结果
      *
-     * @return MessageInterface|null
+     * @return MessageInterface|array|null
      */
-    public function getDestination(): ?MessageInterface
+    public function getDestination(): MessageInterface|array|null
     {
         return $this->destination;
     }
@@ -243,10 +259,10 @@ class Patchwerk
     /**
      * 设置当前返回结果
      *
-     * @param MessageInterface|null $destination
+     * @param array|MessageInterface|null $destination
      * @return $this
      */
-    public function setDestination(?MessageInterface $destination): static
+    public function setDestination(null|array|MessageInterface $destination): static
     {
         $this->destination = $destination;
 
