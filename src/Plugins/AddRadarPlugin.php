@@ -34,7 +34,7 @@ class AddRadarPlugin implements PluginInterface
 
     protected function mergeHeaders($parameters): array
     {
-        $userAgent = 'Third-Party Payment Processor';
+        $userAgent = 'Third-Party Processor';
         $headers = [
             'Accept' => 'application/json, text/plain, application/x-gzip',
             'Content-Type' => 'application/json; charset=utf-8',
