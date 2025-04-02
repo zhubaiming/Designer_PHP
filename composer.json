@@ -3,22 +3,13 @@
   "description": "一个极具优秀设计且简单易用的第三方 API 请求架包，实现PSR标准",
   "type": "library",
   "license": "MIT",
+  "version": "1.0.0",
   "authors": [
     {
       "name": "zhubaiming",
       "email": "other.zhubaiming@gmail.com"
     }
   ],
-  "require": {
-    "php": ">=8.0",
-    "psr/log": "^3.0",
-    "psr/container": "^2.0.1",
-    "guzzlehttp/guzzle": "^7.0",
-    "nesbot/carbon": "^3.8.6"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^9.0"
-  },
   "autoload": {
     "psr-4": {
       "Hongyi\\Designer\\": "src/"
@@ -29,7 +20,17 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Zhubaiming\\Cornerstone\\Tests\\": "tests/"
+      "Hongyi\\Designer\\Tests\\": "tests/"
     }
+  },
+  "require": {
+    "php": ">=8.0",
+    "hongyi/support": "^1.0.0",
+    "psr/log": "^3.0",
+    "psr/container": "^2.0.1",
+    "guzzlehttp/guzzle": "^7.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0"
   }
 }
