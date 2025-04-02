@@ -3,7 +3,7 @@
   "description": "一个极具优秀设计且简单易用的第三方 API 请求架包，实现PSR标准",
   "type": "library",
   "license": "MIT",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "authors": [
     {
       "name": "zhubaiming",

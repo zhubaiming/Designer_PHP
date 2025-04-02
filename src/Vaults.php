@@ -112,7 +112,7 @@ class Vaults
             throw new Exception("参数异常: [{$shortcut}] 未实现 `ShortcutInterface`", Exception::INTERFACE_ERROR);
         }
 
-        return self::handle($shortcut::getPlugins(), $parameters, $shortcut::SEND_HTTP ?? true);
+        return self::handle($shortcut::getPlugins(), $parameters, property_exists($shortcut, 'sendHttp') ? $shortcut::$sendHttp : true);
     }
 
     /**
