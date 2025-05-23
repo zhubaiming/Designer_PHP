@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hongyi\Designer\Plugins;
 
+use Closure;
 use Hongyi\Designer\Contracts\PluginInterface;
 use Hongyi\Designer\Exceptions\Exception;
 use Hongyi\Designer\Exceptions\InvalidResponseException;
@@ -18,7 +19,10 @@ use Hongyi\Designer\Patchwerk;
  */
 class ParserPlugin implements PluginInterface
 {
-    public function handle(Patchwerk $patchwerk, \Closure $next): Patchwerk
+    /**
+     * @throws InvalidResponseException
+     */
+    public function handle(Patchwerk $patchwerk, Closure $next): Patchwerk
     {
         $patchwerk = $next($patchwerk);
 
@@ -32,6 +36,9 @@ class ParserPlugin implements PluginInterface
         return $patchwerk;
     }
 
+    /**
+     * @throws InvalidResponseException
+     */
     protected function validateResponse(Patchwerk $patchwerk): void
     {
         if (!$patchwerk->getHttpEnum()::isSuccess($patchwerk->getDestinationOrigin()->getStatusCode())) {

@@ -153,7 +153,7 @@ class Patchwerk
      *
      * @return null
      */
-    public function getPayload()
+    public function getPayload(): null
     {
         return $this->payload;
     }
@@ -174,7 +174,7 @@ class Patchwerk
     /**
      * 获取当前打包器
      *
-     * @return string
+     * @return PackerInterface|null
      */
 //    public function getPacker(): string
 //    {
@@ -188,7 +188,7 @@ class Patchwerk
     /**
      * 设置当前打包器
      *
-     * @param string $packer
+     * @param PackerInterface $packer
      * @return $this
      */
 //    public function setPacker(string $packer): static
@@ -230,7 +230,7 @@ class Patchwerk
     /**
      * @return null
      */
-    public function getDirection()
+    public function getDirection(): null
     {
         return $this->direction;
     }

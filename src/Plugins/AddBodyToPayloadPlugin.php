@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hongyi\Designer\Plugins;
 
+use Closure;
 use Hongyi\Designer\Contracts\PluginInterface;
 use Hongyi\Designer\Patchwerk;
 
@@ -16,7 +17,7 @@ use function filter_parameters;
  */
 class AddBodyToPayloadPlugin implements PluginInterface
 {
-    public function handle(Patchwerk $patchwerk, \Closure $next): Patchwerk
+    public function handle(Patchwerk $patchwerk, Closure $next): Patchwerk
     {
         // 1、获取处理过后的参数
         // 2、过滤参数中 key 名带有 '_' 的，此类键值为处理过程中所产生的，不需要带到有效荷载中
