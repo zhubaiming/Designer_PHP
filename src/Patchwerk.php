@@ -25,7 +25,7 @@ class Patchwerk
     /**
      * 有效荷载(实际存储请求 API 时所需要的所有有效参数)
      */
-    private $payload = null;
+    private ?string $payload = null;
 
     /**
      * 打包器，可根据打包类型不同，使用不同的打包器(如: json类型打包器，query类型打包器，xml类型打包器等)
@@ -151,9 +151,9 @@ class Patchwerk
     /**
      * 获取请求有效荷载
      *
-     * @return null
+     * @return string|null
      */
-    public function getPayload(): null
+    public function getPayload(): string|null
     {
         return $this->payload;
     }
@@ -228,9 +228,9 @@ class Patchwerk
     }
 
     /**
-     * @return null
+     * @return array|string|null
      */
-    public function getDirection(): null
+    public function getDirection(): array|string|null
     {
         return $this->direction;
     }
