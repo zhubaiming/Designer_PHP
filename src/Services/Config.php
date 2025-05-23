@@ -8,13 +8,16 @@ use Hongyi\Designer\Exceptions\InvalidConfigException;
 
 class Config
 {
-    private array $items = [];
+    private array $items;
 
     public function __construct(mixed $items = [])
     {
         $this->items = $items;
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function get($id)
     {
         $value = $this->items;

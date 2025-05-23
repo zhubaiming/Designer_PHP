@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 use Hongyi\Designer\Providers\ConfigServiceProvider;
 use Hongyi\Designer\Vaults;
+use Random\RandomException;
 
 if (!function_exists('filter_parameters')) {
-    function filter_parameters(array $parameters, \Closure $closure = null): array
+    function filter_parameters(array $parameters, ?Closure $closure = null): array
     {
         return array_filter($parameters, fn($v, $k) => !str_starts_with($k, '_') && !is_null($v) && (is_null($closure) || $closure($k, $v)), ARRAY_FILTER_USE_BOTH);
     }
@@ -35,7 +36,7 @@ if (!function_exists('get_radar_body')) {
 
 if (!function_exists('random_nonce')) {
     /**
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     function random_nonce(int $length): string
     {
@@ -44,6 +45,9 @@ if (!function_exists('random_nonce')) {
 }
 
 if (!function_exists('get_config')) {
+    /**
+     * @throws \Hongyi\Designer\Exceptions\Exception
+     */
     function get_config(string $channel, string $type = 'default', array $params = [])
     {
         $config = Vaults::get(ConfigServiceProvider::class)->get($channel);

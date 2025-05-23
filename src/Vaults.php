@@ -11,10 +11,10 @@ use Hongyi\Designer\Exceptions\Exception;
 use Hongyi\Designer\Exceptions\InvalidResponseException;
 use Hongyi\Designer\Providers\ConfigServiceProvider;
 use Hongyi\Support\Pipeline;
+use Throwable;
 
 class Vaults
 {
-    protected static $instance = null;
 
     private array $providers = [
         ConfigServiceProvider::class
@@ -63,7 +63,7 @@ class Vaults
      * @return mixed
      * @throws Exception
      */
-    public static function get(string $provider, array $arguments = [])
+    public static function get(string $provider, array $arguments = []): mixed
     {
         $provider = self::$bindings[$provider];
 
@@ -77,7 +77,7 @@ class Vaults
 //
 //        throw new InvalidArgumentException('Invalid provider: must be an object or a valid class name.');
 
-        return is_object($provider) ? $provider : (class_exists($provider) ? new $provider(...$arguments) : throw new Exception("服务[{$provider}]未找到", Exception::CONTAINER_NOT_FOUND));
+        return is_object($provider) ? $provider : (class_exists($provider) ? new $provider(...$arguments) : throw new Exception("服务[$provider]未找到", Exception::CONTAINER_NOT_FOUND));
     }
 
     /**
@@ -89,7 +89,7 @@ class Vaults
      */
     public static function registerProvider($provider, $data = null): void
     {
-        (new $provider())->register($data);
+        new $provider()->register($data);
     }
 
     /**
@@ -107,7 +107,7 @@ class Vaults
          * class_implements 返回指定类或对象所实现的所有接口列表
          */
         if (!class_exists($shortcut) || !in_array(ShortcutInterface::class, class_implements($shortcut))) {
-            throw new Exception("参数异常: [{$shortcut}] 未实现 `ShortcutInterface`", Exception::INTERFACE_ERROR);
+            throw new Exception("参数异常: [$shortcut] 未实现 `ShortcutInterface`", Exception::INTERFACE_ERROR);
         }
 
         return self::handle($shortcut::getPlugins(), $parameters, property_exists($shortcut, 'sendHttp') ? $shortcut::$sendHttp : true);
@@ -122,7 +122,7 @@ class Vaults
      * @return mixed
      * @throws Exception
      */
-    public static function handle(array $plugins, array $parameters, bool $sendHttp = true)
+    public static function handle(array $plugins, array $parameters, bool $sendHttp = true): mixed
     {
         self::verifyPlugin($plugins);
 
@@ -131,7 +131,7 @@ class Vaults
 
         // 构建基础管道
         $patchwerkPipeline = $pipeline
-            ->send((new Patchwerk())->setParameters($parameters))
+            ->send(new Patchwerk()->setParameters($parameters))
             ->through($plugins)
             ->via('handle');
 
@@ -163,7 +163,7 @@ class Vaults
 
             $patchwerk->setDestination(clone $response)
                 ->setDestinationOrigin(clone $response);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             throw new InvalidResponseException('响应异常: 请求第三方 API 出错 - ' . $e->getMessage(), Exception::RESPONSE_REQUEST_ERROR);
         }
 
@@ -184,7 +184,7 @@ class Vaults
 
             if ((is_object($plugin) || (is_string($plugin) && class_exists($plugin))) && in_array(PluginInterface::class, class_implements($plugin))) continue;
 
-            throw new Exception("参数异常: [{$plugin}] 插件未实现 `PluginInterface`", Exception::INTERFACE_ERROR);
+            throw new Exception("参数异常: [$plugin] 插件未实现 `PluginInterface`", Exception::INTERFACE_ERROR);
         }
     }
 
