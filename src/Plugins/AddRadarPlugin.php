@@ -43,8 +43,9 @@ class AddRadarPlugin implements PluginInterface
         ];
 
         if (!empty($parameters['_headers'])) {
+            $parameters['_headers']['User-Agent'] = $userAgent !== $parameters['_headers']['User-Agent'] ?? $userAgent ? "{$userAgent}{$parameters['_headers']['User-Agent']}" : $userAgent;
+
             $headers = array_merge($headers, $parameters['_headers']);
-            $headers['User-Agent'] = $headers['User-Agent'] !== $userAgent ? $userAgent . '(' . $headers['User-Agent'] . ')' : $headers['User-Agent'];
         }
 
         if (isset($parameters['_authorization'])) {
