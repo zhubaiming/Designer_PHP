@@ -10,7 +10,7 @@ class BodyPacker implements PackerInterface
 {
     public function pack(array $parameters): string
     {
-        return json_encode($parameters, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        return empty($parameters) ? '' : json_encode($parameters, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
     public function unpack(string $payload): ?array

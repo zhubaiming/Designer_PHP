@@ -27,7 +27,7 @@ class AddBodyToPayloadPlugin implements PluginInterface
         // 4、通过打包器进行对 _body 的打包，并赋值到荷载中
         $patchwerk->setPayload($body);
         // 5、将有效荷载，放置到参数的 _body 字段中
-        $patchwerk->mergeParameters(['_body' => empty($body) ? '' : $body]);
+        $patchwerk->mergeParameters(['_body' => $body]);
 
         return $next($patchwerk);
     }
