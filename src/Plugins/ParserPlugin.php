@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hongyi\Designer\Plugins;
 
 use Closure;
+use Hongyi\Designer\Contracts\HttpEnumInterface;
 use Hongyi\Designer\Contracts\PluginInterface;
 use Hongyi\Designer\Exceptions\Exception;
 use Hongyi\Designer\Exceptions\InvalidResponseException;
@@ -26,12 +27,15 @@ class ParserPlugin implements PluginInterface
     {
         $patchwerk = $next($patchwerk);
 
-        $this->validateResponse($patchwerk);
+        if (!is_null($httpEnum = $patchwerk->getHttpEnum())) {
+            $this->validateResponse($httpEnum, $patchwerk->getDestinationOrigin()->getStatusCode());
 
-        $patchwerk->setDestination($patchwerk->getPacker()->unpack($patchwerk->getDestination()->getBody()->getContents()));
 
-        // 流重置，可以让后续继续读取
-        $patchwerk->getDestinationOrigin()->getBody()->seek(0);
+            $patchwerk->setDestination($patchwerk->getPacker()->unpack($patchwerk->getDestination()->getBody()->getContents()));
+
+            // 流重置，可以让后续继续读取
+            $patchwerk->getDestinationOrigin()->getBody()->seek(0);
+        }
 
         return $patchwerk;
     }
@@ -39,9 +43,9 @@ class ParserPlugin implements PluginInterface
     /**
      * @throws InvalidResponseException
      */
-    protected function validateResponse(Patchwerk $patchwerk): void
+    protected function validateResponse(HttpEnumInterface $httpEnum, int $statusCode): void
     {
-        if (!$patchwerk->getHttpEnum()::isSuccess($patchwerk->getDestinationOrigin()->getStatusCode())) {
+        if (!$httpEnum::isSuccess($statusCode)) {
             throw new InvalidResponseException('微信返回状态码异常，请检查参数是否错误', Exception::RESPONSE_ERROR);
         }
     }

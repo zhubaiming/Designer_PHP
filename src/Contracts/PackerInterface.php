@@ -10,7 +10,9 @@ namespace Hongyi\Designer\Contracts;
  */
 interface PackerInterface
 {
-    public function pack(array $parameters): string;
+    public function pack(array $parameters): string|array;
 
-    public function unpack(string $payload): ?array;
+    public function unpack(string $payload): string|array|null;
+
+    public function getContentType(): string;
 }

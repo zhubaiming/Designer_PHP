@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Hongyi\Designer;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use Hongyi\Designer\Contracts\PluginInterface;
 use Hongyi\Designer\Contracts\ShortcutInterface;
 use Hongyi\Designer\Exceptions\Exception;
+use Hongyi\Designer\Exceptions\InvalidHttpException;
 use Hongyi\Designer\Exceptions\InvalidResponseException;
 use Hongyi\Designer\Providers\ConfigServiceProvider;
 use Hongyi\Support\Pipeline;
 use Throwable;
+
+use function should_do_http_request;
 
 class Vaults
 {
@@ -149,22 +153,45 @@ class Vaults
      * @param Patchwerk $patchwerk
      * @return Patchwerk
      * @throws InvalidResponseException
+     * @throws InvalidHttpException
      */
     public static function ignite(Patchwerk $patchwerk): Patchwerk
     {
-//        if (!shoud_do_http_request($patchwerk->getDirection())){
-//            return $patchwerk;
-//        }
+        if (should_do_http_request($patchwerk->getDirection())) {
+            $request = $patchwerk->getRadar();
 
-        $http = new Client();
+            if (is_null($request)) throw new InvalidHttpException('请求异常: 没有正确设置 request', Exception::HTTP_REQUEST_ERROR);
 
-        try {
-            $response = $http->sendRequest($patchwerk->getRadar());
+            $http = new Client();
 
-            $patchwerk->setDestination(clone $response)
-                ->setDestinationOrigin(clone $response);
-        } catch (Throwable $e) {
-            throw new InvalidResponseException('响应异常: 请求第三方 API 出错 - ' . $e->getMessage(), Exception::RESPONSE_REQUEST_ERROR);
+            /*
+             * 请求选项
+             * 具体参考: https://guzzle-zh-cn.readthedocs.io/zh-cn/latest/request-options.html
+             */
+            $clientOptions = [
+                RequestOptions::ALLOW_REDIRECTS => false, // 是否允许重定向
+                RequestOptions::AUTH => null, // 请求是否进行认证
+                RequestOptions::CONNECT_TIMEOUT => 0, // 等待服务器响应的最大时间，0为不限时
+                RequestOptions::DEBUG => false, // 是否开启调试输出
+                RequestOptions::DECODE_CONTENT => true, // 是否自动解码 Content-Encoding 响应
+                RequestOptions::DELAY => 0, // 发送请求之前延迟的毫秒数
+                RequestOptions::EXPECT => true,
+                RequestOptions::FORCE_IP_RESOLVE => 'v4', // 希望 HTTP 处理器仅使用的协议v4 - ipv4, v6 - ipv6
+                RequestOptions::HTTP_ERRORS => false, // 遵循PSR-18
+                RequestOptions::SYNCHRONOUS => true,
+                RequestOptions::TIMEOUT => 0,
+                RequestOptions::VERSION => '1.1',
+            ];
+
+            try {
+//            $response = $http->sendRequest($request);
+                $response = $http->send($request, $clientOptions);
+
+                $patchwerk->setDestination(clone $response)
+                    ->setDestinationOrigin(clone $response);
+            } catch (Throwable $e) {
+                throw new InvalidResponseException('响应异常: 请求第三方 API 出错 - ' . $e->getMessage(), Exception::RESPONSE_REQUEST_ERROR);
+            }
         }
 
         return $patchwerk;

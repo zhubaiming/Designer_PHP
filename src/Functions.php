@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Hongyi\Designer\Providers\ConfigServiceProvider;
 use Hongyi\Designer\Vaults;
 use Random\RandomException;
+use Hongyi\Designer\Direction\NoHttpRequestDirection;
 
 if (!function_exists('filter_parameters')) {
     function filter_parameters(array $parameters, ?Closure $closure = null): array
@@ -64,5 +65,19 @@ if (!function_exists('get_parent_namespace')) {
         }
 
         return $namespace;
+    }
+}
+
+if (!function_exists('should_do_http_request')) {
+    /**
+     * 是否发起网络请求
+     * 对于通知、回调类的方法，不需要发起网络请求，而是在正常解密数据后，直接返回给调用方
+     *
+     * @param string|bool $direction
+     * @return bool
+     */
+    function should_do_http_request(string|bool $direction = true): bool
+    {
+        return is_bool($direction) ? $direction : (NoHttpRequestDirection::class !== $direction && !in_array(NoHttpRequestDirection::class, class_parents($direction)));
     }
 }

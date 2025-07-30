@@ -39,6 +39,11 @@ class Exception extends \Exception
 
 //    public const RESPONSE_
 
+    /**
+     * 网络请求配置
+     */
+    public const HTTP_REQUEST_ERROR = 9500;
+
     public function __construct(string $message = '未知异常', int $code = self::UNKNOWN_ERROR, ?\Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);

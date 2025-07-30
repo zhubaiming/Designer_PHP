@@ -7,6 +7,7 @@ namespace Hongyi\Designer;
 use Hongyi\Designer\Contracts\HttpEnumInterface;
 use Hongyi\Designer\Contracts\PackerInterface;
 use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface;
 
 class Patchwerk
 {
@@ -209,7 +210,7 @@ class Patchwerk
      *
      * @return MessageInterface|null
      */
-    public function getRadar(): ?MessageInterface
+    public function getRadar(): ?RequestInterface
     {
         return $this->radar;
     }
@@ -217,10 +218,10 @@ class Patchwerk
     /**
      * 设置当前雷达
      *
-     * @param MessageInterface|null $radar
+     * @param RequestInterface|null $radar
      * @return $this
      */
-    public function setRadar(?MessageInterface $radar): static
+    public function setRadar(?RequestInterface $radar): static
     {
         $this->radar = $radar;
 
