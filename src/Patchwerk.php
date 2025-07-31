@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hongyi\Designer;
 
+use GuzzleHttp\Psr7\MultipartStream;
 use Hongyi\Designer\Contracts\HttpEnumInterface;
 use Hongyi\Designer\Contracts\PackerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -26,7 +27,7 @@ class Patchwerk
     /**
      * 有效荷载(实际存储请求 API 时所需要的所有有效参数)
      */
-    private ?string $payload = null;
+    private null|string|MultipartStream $payload = null;
 
     /**
      * 打包器，可根据打包类型不同，使用不同的打包器(如: json类型打包器，query类型打包器，xml类型打包器等)
@@ -152,9 +153,9 @@ class Patchwerk
     /**
      * 获取请求有效荷载
      *
-     * @return string|null
+     * @return string|MultipartStream|null
      */
-    public function getPayload(): string|null
+    public function getPayload(): null|string|MultipartStream
     {
         return $this->payload;
     }
