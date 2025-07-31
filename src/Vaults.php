@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Hongyi\Designer;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\RequestOptions;
 use Hongyi\Designer\Contracts\PluginInterface;
 use Hongyi\Designer\Contracts\ShortcutInterface;
@@ -13,6 +15,7 @@ use Hongyi\Designer\Exceptions\InvalidHttpException;
 use Hongyi\Designer\Exceptions\InvalidResponseException;
 use Hongyi\Designer\Providers\ConfigServiceProvider;
 use Hongyi\Support\Pipeline;
+use Psr\Http\Message\RequestInterface;
 use Throwable;
 
 use function should_do_http_request;
@@ -162,7 +165,7 @@ class Vaults
 
             if (is_null($request)) throw new InvalidHttpException('请求异常: 没有正确设置 request', Exception::HTTP_REQUEST_ERROR);
 
-            $http = new Client();
+            $http = self::buildHttp();
 
             /*
              * 请求选项
@@ -226,5 +229,34 @@ class Vaults
         foreach ($this->providers as $provider) {
             self::registerProvider($provider, $config);
         }
+    }
+
+    private static function buildHttp()
+    {
+        // 构建 HandlerStack
+        $stack = HandlerStack::create();
+
+//        $stack->push();
+        $stack->push(self::defaultHeadersMiddleware());
+        $stack->push(self::logMiddleware());
+
+        // 构建 Guzzle Client
+        return new Client(['handler' => $stack]);
+    }
+
+    private static function defaultHeadersMiddleware(): callable
+    {
+        return Middleware::mapRequest(fn(RequestInterface $request) => $request->withHeader()->withHeader());
+    }
+
+    private static function logMiddleware()
+    {
+        return Middleware::tap(function (RequestInterface $request, array $options) {
+            dump('--------------------  Request --------------------', $request->getMethod(), $request->getUri());
+            foreach ($request->getHeaders() as $name => $value) {
+                dump("{$name}: {$value}");
+            }
+            dump('--------------------  end --------------------');
+        });
     }
 }

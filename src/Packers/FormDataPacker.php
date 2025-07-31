@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hongyi\Designer\Packers;
 
+use GuzzleHttp\Psr7\MultipartStream;
 use Hongyi\Designer\Contracts\PackerInterface;
 
 /**
@@ -13,7 +14,8 @@ class FormDataPacker implements PackerInterface
 {
     public function pack(array $parameters): string|array
     {
-        return array_map(fn($k) => ['name' => $k, 'contents' => $parameters[$k]], array_keys($parameters));
+        $elements = array_map(fn($k) => ['name' => $k, 'contents' => $parameters[$k]], array_keys($parameters));
+        return new MultipartStream($elements);
     }
 
     public function unpack(string $payload): string|array|null
