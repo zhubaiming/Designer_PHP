@@ -123,7 +123,11 @@ if (!function_exists('should_do_http_request')) {
      */
     function should_do_http_request(string|bool|null $direction = true): bool
     {
-        return is_bool($direction) ? $direction : (NoHttpRequestDirection::class !== $direction && !in_array(NoHttpRequestDirection::class, class_parents($direction)));
+        return is_null($direction) || (
+            is_bool($direction)
+                ? $direction
+                : (NoHttpRequestDirection::class !== $direction && !in_array(NoHttpRequestDirection::class, class_parents($direction)))
+            );
     }
 }
 
