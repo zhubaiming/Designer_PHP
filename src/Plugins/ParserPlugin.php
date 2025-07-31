@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hongyi\Designer\Plugins;
 
-use Closure;
 use Hongyi\Designer\Contracts\HttpEnumInterface;
 use Hongyi\Designer\Contracts\PluginInterface;
 use Hongyi\Designer\Exceptions\Exception;
@@ -23,7 +22,7 @@ class ParserPlugin implements PluginInterface
     /**
      * @throws InvalidResponseException
      */
-    public function handle(Patchwerk $patchwerk, Closure $next): Patchwerk
+    public function handle(Patchwerk $patchwerk, \Closure $next): Patchwerk
     {
         $patchwerk = $next($patchwerk);
 

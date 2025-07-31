@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hongyi\Designer\Plugins;
 
-use Closure;
 use GuzzleHttp\Psr7\Request;
 use Hongyi\Designer\Contracts\PluginInterface;
 use Hongyi\Designer\Patchwerk;
@@ -19,7 +18,7 @@ use function get_radar_url;
  */
 class AddRadarPlugin implements PluginInterface
 {
-    public function handle(Patchwerk $patchwerk, Closure $next): Patchwerk
+    public function handle(Patchwerk $patchwerk, \Closure $next): Patchwerk
     {
         $parameters = $patchwerk->getParameters();
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hongyi\Designer\Contracts;
 
-use Closure;
 use Hongyi\Designer\Patchwerk;
 
 /**
@@ -13,5 +12,5 @@ use Hongyi\Designer\Patchwerk;
  */
 interface PluginInterface
 {
-    public function handle(Patchwerk $patchwerk, Closure $next): Patchwerk;
+    public function handle(Patchwerk $patchwerk, \Closure $next): Patchwerk;
 }

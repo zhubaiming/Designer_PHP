@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hongyi\Designer\Plugins;
 
-use Closure;
 use Hongyi\Designer\Contracts\PluginInterface;
 use Hongyi\Designer\Patchwerk;
 
@@ -17,7 +16,7 @@ use function filter_parameters;
  */
 class AddBodyToPayloadPlugin implements PluginInterface
 {
-    public function handle(Patchwerk $patchwerk, Closure $next): Patchwerk
+    public function handle(Patchwerk $patchwerk, \Closure $next): Patchwerk
     {
         $parameters = $patchwerk->getParameters();
         $packer = $patchwerk->getPacker();
