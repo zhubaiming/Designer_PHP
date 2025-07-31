@@ -34,7 +34,7 @@ class ParserPlugin implements PluginInterface
 
         $patchwerk->setDestination([
             'code' => $response->getStatusCode(),
-            'headers' => $response->getHeaders(),
+            'headers' => array_map(fn($v) => (is_array($v) && count($v) === 1) ? reset($v) : $v, $response->getHeaders()),
             'body' => $patchwerk->getPacker()->unpack($response->getBody()->getContents())
         ]);
 
