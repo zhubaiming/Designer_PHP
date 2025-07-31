@@ -246,7 +246,7 @@ class Vaults
 
     private static function defaultHeadersMiddleware(): callable
     {
-        return Middleware::mapRequest(fn(RequestInterface $request) => $request->withHeader()->withHeader());
+        return Middleware::mapRequest(fn(RequestInterface $request) => $request->withHeader('Accept', 'application/json, text/plain, application/x-gzip')->withHeader('User-Agent', 'Third-Party Processor' . ($request->getHeader('User-Agent') ?? '')));
     }
 
     private static function logMiddleware()

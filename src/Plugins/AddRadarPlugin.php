@@ -35,9 +35,8 @@ class AddRadarPlugin implements PluginInterface
     protected function mergeHeaders($parameters): array
     {
         $headers = [
-            'Accept' => 'application/json, text/plain, application/x-gzip',
             'Content-Type' => $parameters['_headers']['Content-Type'] ?? 'application/json; charset=utf-8;',
-            'User-Agent' => 'Third-Party Processor' . ($parameters['_headers']['User-Agent'] ?? ''),
+            'User-Agent' => $parameters['_headers']['User-Agent'] ?? ''
         ];
 
         if (isset($parameters['_authorization'])) {
