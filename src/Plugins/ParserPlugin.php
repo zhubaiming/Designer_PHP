@@ -26,15 +26,20 @@ class ParserPlugin implements PluginInterface
     {
         $patchwerk = $next($patchwerk);
 
+        $response = $patchwerk->getDestination();
+
         if (!is_null($httpEnum = $patchwerk->getHttpEnum())) {
             $this->validateResponse($httpEnum, $patchwerk->getDestinationOrigin()->getStatusCode());
-
-
-            $patchwerk->setDestination($patchwerk->getPacker()->unpack($patchwerk->getDestination()->getBody()->getContents()));
-
-            // 流重置，可以让后续继续读取
-            $patchwerk->getDestinationOrigin()->getBody()->seek(0);
         }
+
+        $patchwerk->setDestination([
+            'code' => $response->getStatusCode(),
+            'headers' => $response->getHeaders(),
+            'body' => $patchwerk->getPacker()->unpack($response->getBody()->getContents())
+        ]);
+
+        // 流重置，可以让后续继续读取
+        if ($response->getBody()->isSeekable()) $response->getBody()->rewind();
 
         return $patchwerk;
     }

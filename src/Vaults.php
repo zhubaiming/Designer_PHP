@@ -231,7 +231,12 @@ class Vaults
         }
     }
 
-    private static function buildHttp()
+    /**
+     * 构建 Http 请求客户端
+     *
+     * @return Client
+     */
+    private static function buildHttp(): Client
     {
         // 构建 HandlerStack
         $stack = HandlerStack::create();
@@ -244,12 +249,25 @@ class Vaults
         return new Client(['handler' => $stack]);
     }
 
+    /**
+     * 添加 Http 请求客户端中间件 - 自动拼装部分请求头
+     *
+     * @return callable
+     */
     private static function defaultHeadersMiddleware(): callable
     {
-        return Middleware::mapRequest(fn(RequestInterface $request) => $request->withHeader('Accept', 'application/json, text/plain, application/x-gzip')->withHeader('User-Agent', 'Third-Party Processor' . ($request->getHeader('User-Agent') ?? '')));
+        return Middleware::mapRequest(fn(RequestInterface $request) => $request
+            ->withHeader('Accept', 'application/json, text/plain, application/x-gzip')
+            ->withHeader('User-Agent', trim('Third-Party Processor ' . ($request->getHeader('User-Agent')[0] ?? '')))
+        );
     }
 
-    private static function logMiddleware()
+    /**
+     * 添加 Http 请求客户端中间件 - 日志记录
+     *
+     * @return callable
+     */
+    private static function logMiddleware(): callable
     {
         return Middleware::tap(function (RequestInterface $request, array $options) {
             dump('--------------------  Request --------------------', $request->getMethod(), $request->getUri());

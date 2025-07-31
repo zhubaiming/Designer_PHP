@@ -6,8 +6,8 @@ namespace Hongyi\Designer;
 
 use Hongyi\Designer\Contracts\HttpEnumInterface;
 use Hongyi\Designer\Contracts\PackerInterface;
-use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Patchwerk
 {
@@ -37,19 +37,19 @@ class Patchwerk
     /**
      * 雷达(请求类)
      */
-    private ?MessageInterface $radar = null;
+    private ?RequestInterface $radar = null;
 
     private $direction = null;
 
     /**
      * 返回结果(实际会在插件执行过程中进行修改，变成新的内容)
      */
-    private null|array|MessageInterface $destination = null;
+    private null|string|array|ResponseInterface $destination = null;
 
     /**
      * 原始返回结果(未做任何修改)
      */
-    private ?MessageInterface $destinationOrigin = null;
+    private ?ResponseInterface $destinationOrigin = null;
 
 
     /**
@@ -208,7 +208,7 @@ class Patchwerk
     /**
      * 获取当前雷达
      *
-     * @return MessageInterface|null
+     * @return RequestInterface|null
      */
     public function getRadar(): ?RequestInterface
     {
@@ -250,9 +250,9 @@ class Patchwerk
     /**
      * 获取当前返回结果
      *
-     * @return MessageInterface|array|null
+     * @return string|array|ResponseInterface|null
      */
-    public function getDestination(): MessageInterface|array|null
+    public function getDestination(): null|string|array|ResponseInterface
     {
         return $this->destination;
     }
@@ -260,10 +260,10 @@ class Patchwerk
     /**
      * 设置当前返回结果
      *
-     * @param array|MessageInterface|null $destination
+     * @param string|array|ResponseInterface|null $destination
      * @return $this
      */
-    public function setDestination(null|array|MessageInterface $destination): static
+    public function setDestination(null|string|array|ResponseInterface $destination): static
     {
         $this->destination = $destination;
 
@@ -273,9 +273,9 @@ class Patchwerk
     /**
      * 获取原始返回结果
      *
-     * @return MessageInterface|null
+     * @return ResponseInterface|null
      */
-    public function getDestinationOrigin(): ?MessageInterface
+    public function getDestinationOrigin(): ?ResponseInterface
     {
         return $this->destinationOrigin;
     }
@@ -283,10 +283,10 @@ class Patchwerk
     /**
      * 设置原始返回结果
      *
-     * @param MessageInterface|null $destinationOrigin
+     * @param ResponseInterface|null $destinationOrigin
      * @return $this
      */
-    public function setDestinationOrigin(?MessageInterface $destinationOrigin): static
+    public function setDestinationOrigin(?ResponseInterface $destinationOrigin): static
     {
         $this->destinationOrigin = $destinationOrigin;
 
