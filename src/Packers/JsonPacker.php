@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hongyi\Designer\Packers;
 
+use GuzzleHttp\Psr7\MultipartStream;
 use Hongyi\Designer\Contracts\PackerInterface;
 
 /**
@@ -11,7 +12,7 @@ use Hongyi\Designer\Contracts\PackerInterface;
  */
 class JsonPacker implements PackerInterface
 {
-    public function pack(array $parameters): string|array
+    public function pack(array $parameters): string|array|MultipartStream
     {
         return json_encode($parameters, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
@@ -25,4 +26,18 @@ class JsonPacker implements PackerInterface
     {
         return 'application/json; charset=utf-8;';
     }
+
+    /*
+     *  public function pack(array $parameters): string
+    {
+        return empty($parameters) ? '' : json_encode($parameters, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
+    public function unpack(string $payload): ?array
+    {
+        $result = json_decode($payload, true);
+
+        return is_array($result) ? $result : null;
+    }
+     */
 }

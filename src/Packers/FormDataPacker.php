@@ -12,7 +12,7 @@ use Hongyi\Designer\Contracts\PackerInterface;
  */
 class FormDataPacker implements PackerInterface
 {
-    public function pack(array $parameters): string|array
+    public function pack(array $parameters): string|array|MultipartStream
     {
         $elements = array_map(fn($k) => ['name' => $k, 'contents' => $parameters[$k]], array_keys($parameters));
         return new MultipartStream($elements);
