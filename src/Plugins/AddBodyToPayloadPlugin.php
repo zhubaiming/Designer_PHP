@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hongyi\Designer\Plugins;
 
+use GuzzleHttp\Psr7\MultipartStream;
 use Hongyi\Designer\Contracts\PluginInterface;
 use Hongyi\Designer\Patchwerk;
 
@@ -31,7 +32,7 @@ class AddBodyToPayloadPlugin implements PluginInterface
         // 5、将有效荷载，放置到参数的 _body 字段中
         $patchwerk->mergeParameters([
             '_body' => $body,
-            '_headers' => array_merge(['Content-Type' => $packer->getContentType()], $parameters['_headers'] ?? []),
+            '_headers' => array_merge($body instanceof MultipartStream ? [] : ['Content-Type' => $packer->getContentType()], $parameters['_headers'] ?? []),
         ]);
 
         return $next($patchwerk);
