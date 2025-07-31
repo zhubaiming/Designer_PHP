@@ -29,7 +29,7 @@ class ParserPlugin implements PluginInterface
         $response = $patchwerk->getDestination();
 
         if (!is_null($httpEnum = $patchwerk->getHttpEnum())) {
-            $this->validateResponse($httpEnum, $patchwerk->getDestinationOrigin()->getStatusCode());
+            $this->validateResponse($httpEnum, $response->getStatusCode());
         }
 
         $patchwerk->setDestination([
@@ -50,7 +50,7 @@ class ParserPlugin implements PluginInterface
     protected function validateResponse(HttpEnumInterface $httpEnum, int $statusCode): void
     {
         if (!$httpEnum::isSuccess($statusCode)) {
-            throw new InvalidResponseException('微信返回状态码异常，请检查参数是否错误', Exception::RESPONSE_ERROR);
+            throw new InvalidResponseException('网络请求返回状态码异常，请检查参数是否错误', Exception::RESPONSE_ERROR);
         }
     }
 }
