@@ -254,7 +254,7 @@ class Vaults
         return Middleware::tap(function (RequestInterface $request, array $options) {
             dump('--------------------  Request --------------------', $request->getMethod(), $request->getUri());
             foreach ($request->getHeaders() as $name => $value) {
-                dump("{$name}: {$value}");
+                dump("{$name}: ", $value);
             }
             dump('--------------------  end --------------------');
         });
