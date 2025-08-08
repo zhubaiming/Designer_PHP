@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Hongyi\Designer;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use Hongyi\Designer\Contracts\PluginInterface;
 use Hongyi\Designer\Contracts\ShortcutInterface;
@@ -160,41 +162,41 @@ class Vaults
      */
     public static function ignite(Patchwerk $patchwerk): Patchwerk
     {
-        if (should_do_http_request($patchwerk->getDirection())) {
-            $request = $patchwerk->getRadar();
+        $real_http_send = should_do_http_request($patchwerk->getDirection());
 
-            if (is_null($request)) throw new InvalidHttpException('请求异常: 没有正确设置 request', Exception::HTTP_REQUEST_ERROR);
+        $request = $patchwerk->getRadar();
 
-            $http = self::buildHttp();
+        if (is_null($request)) throw new InvalidHttpException('请求异常: 没有正确设置 request', Exception::HTTP_REQUEST_ERROR);
 
-            /*
-             * 请求选项
-             * 具体参考: https://guzzle-zh-cn.readthedocs.io/zh-cn/latest/request-options.html
-             */
-            $clientOptions = [
-                RequestOptions::ALLOW_REDIRECTS => false, // 是否允许重定向
-                RequestOptions::AUTH => null, // 请求是否进行认证
-                RequestOptions::CONNECT_TIMEOUT => 0, // 等待服务器响应的最大时间，0为不限时
-                RequestOptions::DEBUG => false, // 是否开启调试输出
-                RequestOptions::DECODE_CONTENT => true, // 是否自动解码 Content-Encoding 响应
-                RequestOptions::DELAY => 0, // 发送请求之前延迟的毫秒数
-                RequestOptions::EXPECT => true,
-                RequestOptions::FORCE_IP_RESOLVE => 'v4', // 希望 HTTP 处理器仅使用的协议v4 - ipv4, v6 - ipv6
-                RequestOptions::HTTP_ERRORS => false, // 遵循PSR-18
-                RequestOptions::SYNCHRONOUS => true,
-                RequestOptions::TIMEOUT => 0,
-                RequestOptions::VERSION => '1.1',
-            ];
+        $http = self::buildHttp($real_http_send, $request);
 
-            try {
+        /*
+         * 请求选项
+         * 具体参考: https://guzzle-zh-cn.readthedocs.io/zh-cn/latest/request-options.html
+         */
+        $clientOptions = [
+            RequestOptions::ALLOW_REDIRECTS => false, // 是否允许重定向
+            RequestOptions::AUTH => null, // 请求是否进行认证
+            RequestOptions::CONNECT_TIMEOUT => 0, // 等待服务器响应的最大时间，0为不限时
+            RequestOptions::DEBUG => false, // 是否开启调试输出
+            RequestOptions::DECODE_CONTENT => true, // 是否自动解码 Content-Encoding 响应
+            RequestOptions::DELAY => 0, // 发送请求之前延迟的毫秒数
+            RequestOptions::EXPECT => true,
+            RequestOptions::FORCE_IP_RESOLVE => 'v4', // 希望 HTTP 处理器仅使用的协议v4 - ipv4, v6 - ipv6
+            RequestOptions::HTTP_ERRORS => false, // 遵循PSR-18
+            RequestOptions::SYNCHRONOUS => true,
+            RequestOptions::TIMEOUT => 0,
+            RequestOptions::VERSION => '1.1',
+        ];
+
+        try {
 //            $response = $http->sendRequest($request);
-                $response = $http->send($request, $clientOptions);
+            $response = $http->send($request, $clientOptions);
 
-                $patchwerk->setDestination(clone $response)
-                    ->setDestinationOrigin(clone $response);
-            } catch (Throwable $e) {
-                throw new InvalidResponseException('响应异常: 请求第三方 API 出错 - ' . $e->getMessage(), Exception::RESPONSE_REQUEST_ERROR);
-            }
+            $patchwerk->setDestination(clone $response)
+                ->setDestinationOrigin(clone $response);
+        } catch (Throwable $e) {
+            throw new InvalidResponseException('响应异常: 请求第三方 API 出错 - ' . $e->getMessage(), Exception::RESPONSE_REQUEST_ERROR);
         }
 
         return $patchwerk;
@@ -236,14 +238,21 @@ class Vaults
      *
      * @return Client
      */
-    private static function buildHttp(): Client
+    private static function buildHttp($real_http_send, $request): Client
     {
-        // 构建 HandlerStack
-        $stack = HandlerStack::create();
+        // 构建 MockHandler，用于模拟请求
+        $mock = null;
+        if ($real_http_send) {
+            $mock = new MockHandler([
+                new Response(200, $request->getHeaders(), $request->getBody())
+            ]);
+        }
 
-//        $stack->push();
+        // 构建 HandlerStack
+        $stack = HandlerStack::create($mock);
+
         $stack->push(self::defaultHeadersMiddleware());
-        $stack->push(self::logMiddleware());
+//        $stack->push(self::logMiddleware());
 
         // 构建 Guzzle Client
         return new Client(['handler' => $stack]);
