@@ -36,12 +36,11 @@ class AddRadarPlugin implements PluginInterface
     {
         $headers = [];
 
-        if (isset($parameters['_headers']['Content-Type'])) $headers['Content-Type'] = $parameters['_headers']['Content-Type'];
-        if (isset($parameters['_headers']['User-Agent'])) $headers['User-Agent'] = $parameters['_headers']['User-Agent'];
-
-        if (isset($parameters['_authorization'])) {
-            $headers['Authorization'] = $parameters['_authorization'];
+        foreach ($parameters['_headers'] as $key => $value) {
+            $headers[$key] = $value;
         }
+
+        if (isset($parameters['_authorization'])) $headers['Authorization'] = $parameters['_authorization'];
 
         return $headers;
     }

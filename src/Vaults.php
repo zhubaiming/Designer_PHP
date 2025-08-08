@@ -242,7 +242,7 @@ class Vaults
     {
         // 构建 MockHandler，用于模拟请求
         $mock = null;
-        if ($real_http_send) {
+        if (!$real_http_send) {
             $mock = new MockHandler([
                 new Response(200, $request->getHeaders(), $request->getBody())
             ]);
